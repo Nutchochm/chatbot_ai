@@ -1,0 +1,9 @@
+accelarate==0.26.0
+flask
+
+nltk
+torch
+torchvision
+transformers
+langdetect
+pythainlp
