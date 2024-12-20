@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from chat import gen_response, load_model
 from langdetect import detect
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='/var/www/chatbot/templates')
 
 @app.get("/")
 def index_get():
