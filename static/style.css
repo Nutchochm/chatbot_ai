@@ -119,8 +119,8 @@ body {
     background: var(--primaryGradient);
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    align-items: left;
+    justify-content: left;
     padding: 15px 20px;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -129,6 +129,7 @@ body {
 
 .chatbox__image--header {
     margin-right: 10px;
+    align-items: left;
 }
 
 .chatbox__heading--header {

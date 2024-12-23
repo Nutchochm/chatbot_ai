@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, jsonify
-from chat import gen_response, load_model
+from chat import gen_response, load_model, loadtyphoon2, typhoon2chat
 from langdetect import detect
-
-app = Flask(__name__, template_folder='/var/www/chatbot/templates')
+#, template_folder='/var/www/chatbot/templates'
+app = Flask(__name__)
+#load_model()
+model, token = loadtyphoon2()
 
 @app.get("/")
 def index_get():
@@ -11,10 +13,13 @@ def index_get():
 @app.post("/predict")
 def predict():
     user_query = request.get_json().get("message")
-    load_model()
+    response = typhoon2chat(user_query, model, token)
 
-    response = gen_response(user_query)
+    #responses = jsonify({"answer": response})
+    #response = gen_response(user_query)
     print(response)    
+    return jsonify({"answer": response})
+
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)

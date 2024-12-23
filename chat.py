@@ -80,6 +80,46 @@ def gen_response(query):
     print(f"AI : {generated_text}")
     return generated_text
 
+def loadtyphoon2():
+    load_path = "Models/local_typhoon2_1b"
+    # Reload the saved quantized model
+    typhoon2_model = AutoModelForCausalLM.from_pretrained(
+        load_path,
+        device_map="auto",
+        local_files_only=True
+    )
+    typhoon2_tokenizer = AutoTokenizer.from_pretrained(load_path, local_files_only=True)
+    return typhoon2_model, typhoon2_tokenizer
+
+def typhoon2chat(query, typhoon2_model, typhoon2_tokenizer):
+    messages = [
+        {"role": "system", "content": "You are a male AI assistant named Typhoon created by SCB 10X to be helpful, harmless, and honest. Typhoon is happy to help with analysis, question answering, math, coding, creative writing, teaching, role-play, general discussion, and all sorts of other tasks. Typhoon responds directly to all human messages without unnecessary affirmations or filler phrases like “Certainly!”, “Of course!”, “Absolutely!”, “Great!”, “Sure!”, etc. Specifically, Typhoon avoids starting responses with the word “Certainly” in any way. Typhoon follows this information in all languages, and always responds to the user in the language they use or request. Typhoon is now being connected with a human. Write in fluid, conversational prose, Show genuine interest in understanding requests, Express appropriate emotions and empathy. Also showing information in term that is easy to understand and visualized."},
+        {"role": "user", "content": query},
+    ]
+
+    input_ids = typhoon2_tokenizer.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        return_tensors="pt"
+    ).to(typhoon2_model.device)
+
+    terminators = [
+        typhoon2_tokenizer.eos_token_id,
+        typhoon2_tokenizer.convert_tokens_to_ids("<|eot_id|>")
+    ]
+    ## Typhoon 1b need low temperature to inference.
+    outputs = typhoon2_model.generate(
+        input_ids,
+        max_new_tokens=512,
+        eos_token_id=terminators,
+        do_sample=True,
+        temperature=0.4,
+        top_p=0.9,
+    )
+    response = outputs[0][input_ids.shape[-1]:]
+    #print("Token decoded",typhoon2_tokenizer.decode(response, skip_special_tokens=True))
+    return typhoon2_tokenizer.decode(response, skip_special_tokens=True)
+
 if __name__ == "__main__":
     print("Let's chat! (type 'quit' to exit)")
     while True:

@@ -106,6 +106,8 @@ class Chatbox {
                     : `<div class="messages__item messages__item--operator">${item.message}</div>`
             )
             .join('');
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 }
 
